@@ -1,0 +1,143 @@
+import pandas as pd
+
+
+def pre_incision_abx():
+    data = pd.read_excel("/Users/arslanamir/Desktop/SSI.xlsx", sheet_name=1)
+
+    master = []
+    by_service = {}
+    for x in range(len(data)):
+        master.append([data['PRE-INCISION ANTIBIOTICS'][x], data['SERVICE'][x]])
+    for service in data['SERVICE']:
+        if service not in by_service.keys():
+            by_service[service] = []
+
+    for service in by_service.keys():
+        averages = {}
+        medications = {}
+        for z in range(len(master)):
+            if master[z][1] == service:
+                words = str(master[z][0]).split("\n")
+                for a in range(len(words)):
+                    if words[a].split()[0] not in medications.keys():
+                        medications[words[a].split()[0]] = []
+                    for y in range(len(words[a].split())):
+                        if words[a].split()[y] == "INCISION:":
+                            medications[words[a].split()[0]].append(words[a].split()[y+1])
+        by_service[service] = medications
+        try:
+            del by_service[service]['nan']
+        except KeyError:
+            pass
+
+        for key, value in by_service[service].items():
+            test_list = list(map(int, by_service[service][key]))
+            total = 0
+            count = 0
+            for x in test_list:
+                total += x
+                count += 1
+            averages[key] = [total/len(test_list), count]
+        by_service[service] = averages
+    print(by_service)
+
+
+def post_incision_abx():
+    data = pd.read_excel("/Users/arslanamir/Desktop/SSI.xlsx", sheet_name=1)
+    master = []
+    by_service = {}
+    for x in range(len(data)):
+        master.append([data['INCISION TO WHEELS OUT ANTIBIOTICS'][x], data['SERVICE'][x],
+                       data['PROCEDURE INCISION START DTTM'][x], data['PRE-INCISION ANTIBIOTICS'][x]])
+    for service in data['SERVICE']:
+        if service not in by_service.keys():
+            by_service[service] = []
+
+    for service in by_service.keys():
+        averages = {}
+        medications = {}
+        for z in range(len(master)):
+            if master[0] and master[3]:
+                if master[z][1] == service:
+                    post_incision_str = str(master[z][0]).split("\n")
+                    pre_incision_str = str(master[z][3]).split("\n")
+                    for a in range(len(post_incision_str)):
+                        flag = True
+                        for b in range(len(pre_incision_str)):
+                            timings = []
+                            for v in range(a):
+                                print('v', v, 'a', a)
+                                if post_incision_str[a] != 'nan' and flag is True:
+                                    print('ITEMS', post_incision_str[v].split()[0], post_incision_str[a].split()[0])
+                                    if post_incision_str[a].split()[0] not in medications.keys():
+                                        medications[post_incision_str[a].split()[0]] = []
+                                    if post_incision_str[a].split()[0] == post_incision_str[v].split()[0]:
+                                        for w in range(v, a):
+                                            if post_incision_str[w].split()[0] == post_incision_str[v].split()[0]:
+                                                v = w
+                                        print('####################################################### BOOYAH')
+                                        flag = False
+                                        for y in range(len(post_incision_str[a].split())):
+                                            if post_incision_str[a].split()[y] == "TAKEN:":
+                                                redose = pd.Timestamp(post_incision_str[a].split()[y + 1])
+                                                timings.append(redose)
+                                                print('REDOSE', redose)
+                                        for y in range(len(post_incision_str[v].split())):
+                                            if post_incision_str[v].split()[y] == "TAKEN:":
+                                                pre_incision = pd.Timestamp(post_incision_str[v].split()[y + 1])
+                                                timings.append(pre_incision)
+                                                print('PRE', pre_incision)
+                                        print('TIMINGS', timings)
+                                        difference = timings[0] - timings[1]
+                                        print('DELTA', difference)
+                                        try:
+                                            difference = difference.hour + difference.minute/60
+                                        except AttributeError:
+                                            difference = difference.seconds//3600 + (difference.seconds//60 - (
+                                                    difference.seconds//3600 * 60))/60
+                                            print('REAL DIFF', difference)
+                                        print('DIFF', difference, '\n')
+                                        print('MEDICATIONS', medications)
+                                        medications[post_incision_str[a].split()[0]].append(difference)
+                            if post_incision_str[a].split()[0] == pre_incision_str[b].split()[0] \
+                                    and post_incision_str[a].split()[0] != 'nan' and flag is True:
+                                if post_incision_str[a].split()[0] not in medications.keys():
+                                    medications[post_incision_str[a].split()[0]] = []
+                                for y in range(len(post_incision_str[a].split())):
+                                    if post_incision_str[a].split()[y] == "TAKEN:":
+                                        redose = pd.Timestamp(post_incision_str[a].split()[y+1])
+                                        timings.append(redose)
+                                        print('REDOSE', redose)
+                                for y in range(len(pre_incision_str[b].split())):
+                                    if pre_incision_str[b].split()[y] == "INCISION:":
+                                        pre_incision = pd.to_datetime(int(pre_incision_str[b].split()[y+1]), unit='m')
+                                        timings.append(pre_incision)
+                                        print('PRE', pre_incision)
+                                print('TIMINGS', timings)
+                                print('INCISION', master[z][2])
+                                difference = timings[0] - master[z][2] + timings[1]
+                                difference = difference.hour + difference.minute/60
+                                print('DIFF', difference, '\n')
+                                medications[post_incision_str[a].split()[0]].append(difference)
+            by_service[service] = medications
+            try:
+                del by_service[service]['nan']
+            except KeyError:
+                pass
+
+            for key, value in by_service[service].items():
+                test_list = list(map(int, by_service[service][key]))
+                total = 0
+                count = 0
+                for x in test_list:
+                    total += x
+                    count += 1
+                try:
+                    averages[key] = [total / len(test_list), count]
+                except ZeroDivisionError:
+                    break
+            by_service[service] = averages
+        print(by_service)
+
+
+post_incision_abx()
