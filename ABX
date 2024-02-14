@@ -6,17 +6,16 @@ wound_protector_cpt = {44320, 44204, 44207, 44208, 44205, 44206, 44207, 44208, 4
                        }
 wound_protector_words = {'COLECTOMY', 'COLON RESECTION', 'LOW ANTERIOR BOWEL RESECTION'}
 clean_closure_cpt = {44204, 44207, 44208, 44205, 44206, 44207, 44208, 44210, 44211, 44212,
-                     44140, 44141, 44143, 44144, 44145, 44146, 44147, 44160,
+                     44140, 44141, 44143, 44144, 44145, 44146, 44147, 44160, 44320,
                      45112, 45110, 45119, 45120, 47120, 47122, 47125, 47130, 48150,
                      48152, 48153, 48154, 50840, 50650, 50660, 51590, 51550, 51555, 51565, 51570, 51575, 51580, 51585,
-                     51595, 51596, 53210, 53215,
+                     51595, 51596, 53210, 53215, 50700, 52341, 52344, 44660, 44661,
                      }
 clean_closure_words = {'COLECTOMY', 'LOW ANTERIOR BOWEL RESECTION', 'COLON RESECTION',
-                       'NEPHROURETERECTOMY'
+                       'NEPHROURETERECTOMY', 'BOWEL', 'CECOTOMY', 'COLOTOMY', 'ILEOSTOMY'
                        }
 
-
-def pre_incision_abx():
+def pre_incision_abx_avg():
     data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
 
     master = []
@@ -65,7 +64,7 @@ def pre_incision_abx():
     #print(by_service)
 
 
-def post_incision_abx():
+def post_incision_abx_avg():
     data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     master = []
     by_service = {}
@@ -292,7 +291,7 @@ def wound_protector():
 
 
 def clean_closure():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     applicable = 0
     used = 0
 
@@ -337,6 +336,22 @@ def clean_closure():
 
     print('applicable', applicable, 'used', used,
           '\n', 'rate', used / applicable)
+
+
+def homo():
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    sum = 0
+    count = 0
+
+    for x in range(len(data)):
+        lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+        for line in lines:
+            if line.split()[0] == 'AMPICILLIN-SULBACTAM':
+                count += 1
+                print('TIME', data['TOTAL SURG IN MINUTES'][x])
+                sum += data['TOTAL SURG IN MINUTES'][x]
+
+    print(sum/count)
 
 
 clean_closure()
