@@ -1,6 +1,20 @@
 #!/bin/python3
 import pandas as pd
 
+wound_protector_cpt = {44320, 44204, 44207, 44208, 44205, 44206, 44207, 44208, 44210, 44211, 44212,
+                       44140, 44141, 44143, 44144, 44145, 44146, 44147, 44160, 45112, 45110, 45119, 45120,
+                       }
+wound_protector_words = {'COLECTOMY', 'COLON RESECTION', 'LOW ANTERIOR BOWEL RESECTION'}
+clean_closure_cpt = {44204, 44207, 44208, 44205, 44206, 44207, 44208, 44210, 44211, 44212,
+                     44140, 44141, 44143, 44144, 44145, 44146, 44147, 44160,
+                     45112, 45110, 45119, 45120, 47120, 47122, 47125, 47130, 48150,
+                     48152, 48153, 48154, 50840, 50650, 50660, 51590, 51550, 51555, 51565, 51570, 51575, 51580, 51585,
+                     51595, 51596, 53210, 53215,
+                     }
+clean_closure_words = {'COLECTOMY', 'LOW ANTERIOR BOWEL RESECTION', 'COLON RESECTION',
+                       'NEPHROURETERECTOMY'
+                       }
+
 
 def pre_incision_abx():
     data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
@@ -166,73 +180,6 @@ def pre_incision_printer():
     medications.to_excel('/Users/arslanamir/Documents/Work/Quality/practice2.xlsx', index=False)
 
 
-"""def post_incision_printer():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
-    medications = {}
-
-    for x in range(len(data)):
-        if data['INCISION TO WHEELS OUT ANTIBIOTICS'][x] and data['PRE-INCISION ANTIBIOTICS'][x]:
-            pre_incision_str = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-            post_incision_str = str(data['INCISION TO WHEELS OUT ANTIBIOTICS'][x]).split("\n")
-            for a in range(len(post_incision_str)):
-                flag = True
-                for b in range(len(pre_incision_str)):
-                    timings = []
-                    for v in range(a):
-                        if post_incision_str[a] != 'nan' and flag is True:
-                            print('ITEMS', post_incision_str[v].split()[0], post_incision_str[a].split()[0])
-                            if post_incision_str[a].split()[0] not in medications.keys():
-                                medications[post_incision_str[a].split()[0]] = []
-                            if post_incision_str[a].split()[0] == post_incision_str[v].split()[0]:
-                                for w in range(v, a):
-                                    if post_incision_str[w].split()[0] == post_incision_str[v].split()[0]:
-                                        v = w
-                                    print('####################################################### BOOYAH')
-                                    flag = False
-                                    for y in range(len(post_incision_str[a].split())):
-                                        if post_incision_str[a].split()[y] == "TAKEN:":
-                                            redose = pd.Timestamp(post_incision_str[a].split()[y + 1])
-                                            timings.append(redose)
-                                            print('REDOSE', redose)
-                                    for y in range(len(post_incision_str[v].split())):
-                                        if post_incision_str[v].split()[y] == "TAKEN:":
-                                            pre_incision = pd.Timestamp(post_incision_str[v].split()[y + 1])
-                                            timings.append(pre_incision)
-                                            print('PRE', pre_incision)
-                                    print('TIMINGS', timings)
-                                    difference = timings[0] - timings[1]
-                                    print('DELTA', difference)
-                                    try:
-                                        difference = difference.hour + difference.minute / 60
-                                    except AttributeError:
-                                        difference = difference.seconds // 3600 + (difference.seconds // 60 - (
-                                                difference.seconds // 3600 * 60)) / 60
-                                        print('REAL DIFF', difference)
-                                    print('DIFF', difference, '\n')
-                                    print('MEDICATIONS', medications)
-                                    medications[post_incision_str[a].split()[0]].append(difference)
-                    if post_incision_str[a].split()[0] == pre_incision_str[b].split()[0] \
-                            and post_incision_str[a].split()[0] != 'nan' and flag is True:
-                        if post_incision_str[a].split()[0] not in medications.keys():
-                            medications[post_incision_str[a].split()[0]] = []
-                        for y in range(len(post_incision_str[a].split())):
-                            if post_incision_str[a].split()[y] == "TAKEN:":
-                                redose = pd.Timestamp(post_incision_str[a].split()[y + 1])
-                                timings.append(redose)
-                                print('REDOSE', redose)
-                        for y in range(len(pre_incision_str[b].split())):
-                            if pre_incision_str[b].split()[y] == "INCISION:":
-                                pre_incision = pd.to_datetime(int(pre_incision_str[b].split()[y + 1]), unit='m')
-                                timings.append(pre_incision)
-                                print('PRE', pre_incision)
-                        print('TIMINGS', timings)
-                        print('INCISION', data['PROCEDURE INCISION START DTTM'][x])
-                        difference = timings[0] - data['PROCEDURE INCISION START DTTM'][x] + timings[1]
-                        difference = difference.hour + difference.minute / 60
-                        print('DIFF', difference, '\n')
-                        medications[post_incision_str[a].split()[0]].append(difference)"""
-
-
 def post_incision_printer():
     data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     medications = {}
@@ -296,5 +243,100 @@ def post_incision_printer():
                         print('DIFF', difference, '\n')
                         medications[post_incision_str[a].split()[0]].append(difference)
 
+    """medications = pd.DataFrame.from_dict(data=medications, orient='index').T
+    medications.to_excel('/Users/arslanamir/Documents/Work/Quality/practice1.xlsx', index=False)"""
 
-post_incision_printer()
+
+def wound_protector():
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    applicable = 0
+    used = 0
+
+    for x in range(len(data)):
+        flag = True
+        lines = str(data['CPT CODES'][x]).split(" , ")
+        for line in lines:
+            for code in wound_protector_cpt:
+                try:
+                    if int(code) == int(line) and flag:
+                        print(data['PRIM PROCEDURE'][x])
+                        print('code', code, 'line', line)
+                        applicable += 1
+                        flag = False
+                except ValueError:
+                    pass
+        try:
+            for procedure in wound_protector_words:
+                if len(procedure.split()) > 1:
+                    words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+                    if procedure.split()[0] in words and procedure.split()[1] in words and flag:
+                        print(data['PRIM PROCEDURE'][x])
+                        print('CODE', procedure)
+                        applicable += 1
+                        flag = False
+                words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+                if procedure in words and flag:
+                    print(data['PRIM PROCEDURE'][x])
+                    print('CODE', procedure)
+                    applicable += 1
+                    flag = False
+        except AttributeError:
+            pass
+        if str(data['WOUND PROT USED YN'][x]) == 'Yes':
+            used += 1
+        print(data['PRIM PROCEDURE'][x])
+        print("USED", used, 'applicable', applicable, '\n')
+
+    print('applicable', applicable, 'used', used,
+          '\n', 'rate', used/applicable)
+
+
+def clean_closure():
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    applicable = 0
+    used = 0
+
+    for x in range(len(data)):
+        if str(data['WOUND CLASS'][x]) != 'Clean':
+            flag = True
+            lines = str(data['CPT CODES'][x]).split(" , ")
+            for line in lines:
+                for code in clean_closure_cpt:
+                    try:
+                        if int(code) == int(line) and flag:
+                            print(data['PRIM PROCEDURE'][x])
+                            print('code', code, 'line', line)
+                            applicable += 1
+                            flag = False
+                            if str(data['CLEAN CLOSURE PROC YN'][x]) == 'Yes':
+                                used += 1
+                    except ValueError:
+                        pass
+            try:
+                for procedure in clean_closure_words:
+                    if len(procedure.split()) > 1:
+                        words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+                        if procedure.split()[0] in words and procedure.split()[1] in words and flag:
+                            print(data['PRIM PROCEDURE'][x])
+                            print('CODE', procedure)
+                            applicable += 1
+                            flag = False
+                            if str(data['CLEAN CLOSURE PROC YN'][x]) == 'Yes':
+                                used += 1
+                    words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+                    if procedure in words and flag:
+                        print(data['PRIM PROCEDURE'][x])
+                        print('CODE', procedure)
+                        applicable += 1
+                        flag = False
+                        if str(data['CLEAN CLOSURE PROC YN'][x]) == 'Yes':
+                            used += 1
+            except AttributeError:
+                pass
+            print("USED", used, 'applicable', applicable, '\n')
+
+    print('applicable', applicable, 'used', used,
+          '\n', 'rate', used / applicable)
+
+
+clean_closure()
