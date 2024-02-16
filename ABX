@@ -354,4 +354,36 @@ def homo():
     print(sum/count)
 
 
-clean_closure()
+def pre_compliance():
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    data.dropna(subset=['SURGERY DATE'], inplace=True)
+
+    print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
+          "TOTAL CASES", len(data), '\n')
+
+    cystectomy = []
+    count = 0
+    total = 0
+
+    for x in range(len(data)):
+        try:
+            procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
+        except AttributeError:
+            pass
+        for proc in procedure:
+            if proc == 'CYSTECTOMY':
+                lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                for a in range(len(lines)):
+                    for y in range(len(lines[a].split())):
+                        if lines[a].split()[y] == "INCISION:":
+                            pre_incision = lines[a].split()[0]
+                            cystectomy.append(pre_incision)
+                            print(pre_incision, x)
+    for medication in cystectomy:
+        total += 1
+        if medication != "AMPICILLIN-SULBACTAM" and medication != "LEVOFLOXACIN" and medication != "METRONIDAZOLE":
+            count += 1
+
+    print(count, total, count/total)
+
+pre_compliance()
