@@ -357,13 +357,10 @@ def homo():
 def pre_compliance():
     data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
     data.dropna(subset=['SURGERY DATE'], inplace=True)
-
     print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
           "TOTAL CASES", len(data), '\n')
-
     cystectomy = []
-    count = 0
-    total = 0
+    count, total = 0, 0
 
     for x in range(len(data)):
         try:
@@ -383,10 +380,74 @@ def pre_compliance():
         except AttributeError:
             pass
     for medication in cystectomy:
+        if medication == 'nan':
+            continue
         total += 1
-        if medication != "AMPICILLIN-SULBACTAM" and medication != "LEVOFLOXACIN" and medication != "METRONIDAZOLE":
+        if medication != "AMPICILLIN-SULBACTAM" and medication != "LEVOFLOXACIN" and medication != "METRONIDAZOLE" \
+                and medication != "AMPICILLIN":
             count += 1
+            print('NO', medication)
+    print(count, total, count/total, '\n',
+          '##########################################END CYSTECTOMY########################################################',
+          '\n\n\n')
 
-    print(count, total, count/total)
+    prostatectomy = []
+    count, total = 0, 0
+
+    for x in range(len(data)):
+        try:
+            procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
+            for proc in procedure:
+                if proc == 'PROSTATECTOMY' or proc == 'NEPHRECTOMY' and 'COLECTOMY' not in procedure and \
+                        'CYSTECTOMY' not in procedure:
+                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                    for a in range(len(lines)):
+                        pre_incision = lines[a].split()[0]
+                        prostatectomy.append(pre_incision)
+                        print(pre_incision, '\n',
+                              data['PRIM PROCEDURE'][x], x, '\n')
+                        if pre_incision != "CEFAZOLIN" and pre_incision != "LEVOFLOXACIN":
+                            break
+        except AttributeError:
+            pass
+    for medication in prostatectomy:
+        if medication == 'nan':
+            continue
+        total += 1
+        if medication != "CEFAZOLIN" and medication != "LEVOFLOXACIN":
+            count += 1
+    print(count, total, count / total, '\n',
+          '##########################################END PROSTATECTOMY########################################################')
+
+    cystoscopy = []
+    count, total = 0, 0
+
+    for x in range(len(data)):
+        try:
+            procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
+            for proc in procedure:
+                if proc == 'CYSTOSCOPY' and 'NEPHRECTOMY' not in procedure and 'PROSTATECTOMY' not in procedure and \
+                        'CYSTECTOMY' not in procedure and 'HYSTERECTOMY' not in procedure\
+                        and 'URETHROPLASTY' not in procedure and 'OOPHORECTOMY' not in procedure and \
+                        'SALPINGECTOMY' not in procedure:
+                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                    for a in range(len(lines)):
+                        pre_incision = lines[a].split()[0]
+                        cystoscopy.append(pre_incision)
+                        print(pre_incision, '\n',
+                              data['PRIM PROCEDURE'][x], x, '\n')
+                        if pre_incision != "CEFAZOLIN" and pre_incision != "CIPROFLOXACIN":
+                            break
+        except AttributeError:
+            pass
+    for medication in cystoscopy:
+        if medication == 'nan':
+            continue
+        total += 1
+        if medication != "CEFAZOLIN" and medication != "CIPROFLOXACIN":
+            count += 1
+    print(count, total, count / total, '\n',
+          '##########################################END CYSTOSCOPY########################################################')
+
 
 pre_compliance()
