@@ -355,12 +355,13 @@ def homo():
 
 
 def pre_compliance():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     data.dropna(subset=['SURGERY DATE'], inplace=True)
     print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
           "TOTAL CASES", len(data), '\n')
     """cystectomy = []
     count, total = 0, 0
+    medications = {}
 
     for x in range(len(data)):
         try:
@@ -374,11 +375,13 @@ def pre_compliance():
                         cystectomy.append(pre_incision)
                         print(pre_incision, '\n',
                               data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision != "AMPICILLIN-SULBACTAM" and pre_incision != "LEVOFLOXACIN" \
-                                and pre_incision != "METRONIDAZOLE":
+                        if pre_incision == "AMPICILLIN-SULBACTAM" or pre_incision == "LEVOFLOXACIN" \
+                                or pre_incision == "METRONIDAZOLE":
                             break
         except AttributeError:
             pass
+    for medication in cystectomy:
+        medications[medication] = 0
     for medication in cystectomy:
         if medication == 'nan':
             continue
@@ -386,41 +389,15 @@ def pre_compliance():
         if medication != "AMPICILLIN-SULBACTAM" and medication != "LEVOFLOXACIN" and medication != "METRONIDAZOLE" \
                 and medication != "AMPICILLIN":
             count += 1
-            print('NO', medication)
+            medications[medication] += 1
     print(count, total, count/total, '\n',
           '##########################################END CYSTECTOMY########################################################',
           '\n\n\n')
-
-    prostatectomy = []
-    count, total = 0, 0
-
-    for x in range(len(data)):
-        try:
-            procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
-            for proc in procedure:
-                if proc == 'PROSTATECTOMY' or proc == 'NEPHRECTOMY' and 'COLECTOMY' not in procedure and \
-                        'CYSTECTOMY' not in procedure:
-                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-                    for a in range(len(lines)):
-                        pre_incision = lines[a].split()[0]
-                        prostatectomy.append(pre_incision)
-                        print(pre_incision, '\n',
-                              data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision != "CEFAZOLIN" and pre_incision != "LEVOFLOXACIN":
-                            break
-        except AttributeError:
-            pass
-    for medication in prostatectomy:
-        if medication == 'nan':
-            continue
-        total += 1
-        if medication != "CEFAZOLIN" and medication != "LEVOFLOXACIN":
-            count += 1
-    print(count, total, count / total, '\n',
-          '##########################################END PROSTATECTOMY########################################################')
+    print(medications)
 
     cystoscopy = []
     count, total = 0, 0
+    medications = {}
 
     for x in range(len(data)):
         try:
@@ -436,53 +413,26 @@ def pre_compliance():
                         cystoscopy.append(pre_incision)
                         print(pre_incision, '\n',
                               data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision != "CEFAZOLIN" and pre_incision != "CIPROFLOXACIN":
+                        if pre_incision == "CEFAZOLIN" or pre_incision == "CIPROFLOXACIN":
                             break
         except AttributeError:
             pass
+    for medication in cystoscopy:
+        medications[medication] = 0
     for medication in cystoscopy:
         if medication == 'nan':
             continue
         total += 1
         if medication != "CEFAZOLIN" and medication != "CIPROFLOXACIN":
             count += 1
+            medications[medication] += 1
     print(count, total, count / total, '\n',
           '##########################################END CYSTOSCOPY########################################################')
-
-    cystectomy = []
-    count, total = 0, 0
-
-    for x in range(len(data)):
-        try:
-            procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
-            for proc in procedure:
-                if proc == 'CYSTECTOMY' and 'CYSTOSCOPY' not in procedure and 'PROSTATECTOMY' not in procedure \
-                        and 'NEPHRECTOMY' not in procedure:
-                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-                    for a in range(len(lines)):
-                        pre_incision = lines[a].split()[0]
-                        cystectomy.append(pre_incision)
-                        print(pre_incision, '\n',
-                              data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision != "AMPICILLIN-SULBACTAM" and pre_incision != "LEVOFLOXACIN" \
-                                and pre_incision != "METRONIDAZOLE":
-                            break
-        except AttributeError:
-            pass
-    for medication in cystectomy:
-        if medication == 'nan':
-            continue
-        total += 1
-        if medication != "AMPICILLIN-SULBACTAM" and medication != "LEVOFLOXACIN" and medication != "METRONIDAZOLE" \
-                and medication != "AMPICILLIN":
-            count += 1
-            print('NO', medication)
-    print(count, total, count / total, '\n',
-          '##########################################END CYSTECTOMY########################################################',
-          '\n\n\n')
+    print(medications)
 
     prostatectomy = []
     count, total = 0, 0
+    medications = {}
 
     for x in range(len(data)):
         try:
@@ -496,18 +446,22 @@ def pre_compliance():
                         prostatectomy.append(pre_incision)
                         print(pre_incision, '\n',
                               data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision != "CEFAZOLIN" and pre_incision != "LEVOFLOXACIN":
+                        if pre_incision == "CEFAZOLIN" or pre_incision == "LEVOFLOXACIN":
                             break
         except AttributeError:
             pass
+    for medication in prostatectomy:
+        medications[medication] = 0
     for medication in prostatectomy:
         if medication == 'nan':
             continue
         total += 1
         if medication != "CEFAZOLIN" and medication != "LEVOFLOXACIN":
             count += 1
+            medications[medication] += 1
     print(count, total, count / total, '\n',
-          '##########################################END PROSTATECTOMY########################################################')"""
+          '##########################################END PROSTATECTOMY########################################################')
+    print(medications)
 
     hysterectomy = []
     count, total = 0, 0
@@ -524,7 +478,7 @@ def pre_compliance():
                         hysterectomy.append(pre_incision)
                         print(pre_incision, '\n',
                               data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision != "CEFAZOLIN" and pre_incision != "CLINDAMYCIN" and pre_incision != "GENTAMICIN":
+                        if pre_incision == "CEFAZOLIN" or pre_incision == "CLINDAMYCIN" or pre_incision == "GENTAMICIN":
                             break
         except AttributeError:
             pass
@@ -538,11 +492,54 @@ def pre_compliance():
         if medication != "CEFAZOLIN" and medication != "CLINDAMYCIN" and medication != "GENTAMICIN":
             count += 1
             medications[medication] += 1
-            print('NO', medication, count)
     print(count, total, count / total, '\n',
           '##########################################END HYSTERECTOMY########################################################')
+    print(medications)"""
+
+    hepatobiliary = []
+    count, total = 0, 0
+    medications = {}
+
+    for x in range(len(data)):
+        flag = True
+        try:
+            procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
+            for proc in procedure:
+                if flag:
+                    if proc == 'HEPATECTOMY' or proc == 'HEPATIC' or proc == 'CHOLECYSTECTOMY' or proc == 'PANCREATECTOMY'\
+                            or proc == 'PANCREATICODUODENECTOMY':
+                        if 'COLECTOMY' not in procedure:
+                            lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                            for a in range(len(lines)):
+                                pre_incision = lines[a].split()[0]
+                                hepatobiliary.append(pre_incision)
+                                print(pre_incision, '\n',
+                                      data['PRIM PROCEDURE'][x], x, '\n')
+                                if pre_incision == "PIPERACILLIN-TAZOBACTAM" or pre_incision == "CIPROFLOXACIN" \
+                                        or pre_incision == "METRONIDAZOLE":
+                                    flag = False
+                                    break
+        except AttributeError:
+            pass
+    for medication in hepatobiliary:
+        medications[medication] = 0
+    for medication in hepatobiliary:
+        if medication == 'nan':
+            continue
+        total += 1
+        if medication != "PIPERACILLIN-TAZOBACTAM" and medication != "CIPROFLOXACIN" and medication != "METRONIDAZOLE":
+            count += 1
+            medications[medication] += 1
+    print(count, total, count / total, '\n',
+          '##########################################END HEPATOBILIARY########################################################')
     print(medications)
 
+
+def post_compliance():
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
+    data.dropna(subset=['SURGERY DATE'], inplace=True)
+    print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
+          "TOTAL CASES", len(data), '\n')
 
 
 pre_compliance()
