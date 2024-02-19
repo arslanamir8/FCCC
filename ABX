@@ -364,20 +364,23 @@ def pre_compliance():
     medications = {}
 
     for x in range(len(data)):
+        flag = True
         try:
             procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
             for proc in procedure:
-                if proc == 'CYSTECTOMY' and 'CYSTOSCOPY' not in procedure and 'PROSTATECTOMY' not in procedure\
-                        and 'NEPHRECTOMY' not in procedure:
-                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-                    for a in range(len(lines)):
-                        pre_incision = lines[a].split()[0]
-                        cystectomy.append(pre_incision)
-                        print(pre_incision, '\n',
-                              data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision == "AMPICILLIN-SULBACTAM" or pre_incision == "LEVOFLOXACIN" \
-                                or pre_incision == "METRONIDAZOLE":
-                            break
+                if flag:
+                    if proc == 'CYSTECTOMY' and 'CYSTOSCOPY' not in procedure and 'PROSTATECTOMY' not in procedure\
+                            and 'NEPHRECTOMY' not in procedure:
+                        lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                        for a in range(len(lines)):
+                            pre_incision = lines[a].split()[0]
+                            cystectomy.append(pre_incision)
+                            print(pre_incision, '\n',
+                                  data['PRIM PROCEDURE'][x], x, '\n')
+                            if pre_incision == "AMPICILLIN-SULBACTAM" or pre_incision == "LEVOFLOXACIN" \
+                                    or pre_incision == "METRONIDAZOLE":
+                                flag = False
+                                break
         except AttributeError:
             pass
     for medication in cystectomy:
@@ -400,21 +403,24 @@ def pre_compliance():
     medications = {}
 
     for x in range(len(data)):
+        flag = True
         try:
             procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
             for proc in procedure:
-                if proc == 'CYSTOSCOPY' and 'NEPHRECTOMY' not in procedure and 'PROSTATECTOMY' not in procedure and \
-                        'CYSTECTOMY' not in procedure and 'HYSTERECTOMY' not in procedure\
-                        and 'URETHROPLASTY' not in procedure and 'OOPHORECTOMY' not in procedure and \
-                        'SALPINGECTOMY' not in procedure:
-                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-                    for a in range(len(lines)):
-                        pre_incision = lines[a].split()[0]
-                        cystoscopy.append(pre_incision)
-                        print(pre_incision, '\n',
-                              data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision == "CEFAZOLIN" or pre_incision == "CIPROFLOXACIN":
-                            break
+                if flag:
+                    if proc == 'CYSTOSCOPY' and 'NEPHRECTOMY' not in procedure and 'PROSTATECTOMY' not in procedure and \
+                            'CYSTECTOMY' not in procedure and 'HYSTERECTOMY' not in procedure\
+                            and 'URETHROPLASTY' not in procedure and 'OOPHORECTOMY' not in procedure and \
+                            'SALPINGECTOMY' not in procedure:
+                        lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                        for a in range(len(lines)):
+                            pre_incision = lines[a].split()[0]
+                            cystoscopy.append(pre_incision)
+                            print(pre_incision, '\n',
+                                  data['PRIM PROCEDURE'][x], x, '\n')
+                            if pre_incision == "CEFAZOLIN" or pre_incision == "CIPROFLOXACIN":
+                                flag = False
+                                break
         except AttributeError:
             pass
     for medication in cystoscopy:
@@ -435,19 +441,22 @@ def pre_compliance():
     medications = {}
 
     for x in range(len(data)):
+        flag = True
         try:
             procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
             for proc in procedure:
-                if proc == 'PROSTATECTOMY' or proc == 'NEPHRECTOMY' and 'COLECTOMY' not in procedure and \
-                        'CYSTECTOMY' not in procedure:
-                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-                    for a in range(len(lines)):
-                        pre_incision = lines[a].split()[0]
-                        prostatectomy.append(pre_incision)
-                        print(pre_incision, '\n',
-                              data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision == "CEFAZOLIN" or pre_incision == "LEVOFLOXACIN":
-                            break
+                if flag:
+                    if proc == 'PROSTATECTOMY' or proc == 'NEPHRECTOMY' and 'COLECTOMY' not in procedure and \
+                            'CYSTECTOMY' not in procedure:
+                        lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                        for a in range(len(lines)):
+                            pre_incision = lines[a].split()[0]
+                            prostatectomy.append(pre_incision)
+                            print(pre_incision, '\n',
+                                  data['PRIM PROCEDURE'][x], x, '\n')
+                            if pre_incision == "CEFAZOLIN" or pre_incision == "LEVOFLOXACIN":
+                                flag = False
+                                break
         except AttributeError:
             pass
     for medication in prostatectomy:
@@ -468,18 +477,22 @@ def pre_compliance():
     medications = {}
 
     for x in range(len(data)):
+        flag = True
         try:
             procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
             for proc in procedure:
-                if proc == 'HYSTERECTOMY' and 'COLECTOMY' not in procedure and 'CYSTECTOMY' not in procedure:
-                    lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-                    for a in range(len(lines)):
-                        pre_incision = lines[a].split()[0]
-                        hysterectomy.append(pre_incision)
-                        print(pre_incision, '\n',
-                              data['PRIM PROCEDURE'][x], x, '\n')
-                        if pre_incision == "CEFAZOLIN" or pre_incision == "CLINDAMYCIN" or pre_incision == "GENTAMICIN":
-                            break
+                if flag:
+                    if proc == 'HYSTERECTOMY' and 'COLECTOMY' not in procedure and 'CYSTECTOMY' not in procedure:
+                        lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                        for a in range(len(lines)):
+                            pre_incision = lines[a].split()[0]
+                            hysterectomy.append(pre_incision)
+                            print(pre_incision, '\n',
+                                  data['PRIM PROCEDURE'][x], x, '\n')
+                            if pre_incision == "CEFAZOLIN" or pre_incision == "CLINDAMYCIN" or \
+                                    pre_incision == "GENTAMICIN":
+                                flag = False
+                                break
         except AttributeError:
             pass
 
@@ -501,24 +514,24 @@ def pre_compliance():
     medications = {}
 
     for x in range(len(data)):
-        flag = True
+        continue_1 = False
         try:
             procedure = (data['PRIM PROCEDURE'][x].upper().replace(',', '')).split()
             for proc in procedure:
-                if flag:
-                    if proc == 'HEPATECTOMY' or proc == 'HEPATIC' or proc == 'CHOLECYSTECTOMY' or proc == 'PANCREATECTOMY'\
-                            or proc == 'PANCREATICODUODENECTOMY':
-                        if 'COLECTOMY' not in procedure:
-                            lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
-                            for a in range(len(lines)):
-                                pre_incision = lines[a].split()[0]
-                                hepatobiliary.append(pre_incision)
-                                print(pre_incision, '\n',
-                                      data['PRIM PROCEDURE'][x], x, '\n')
-                                if pre_incision == "PIPERACILLIN-TAZOBACTAM" or pre_incision == "CIPROFLOXACIN" \
-                                        or pre_incision == "METRONIDAZOLE":
-                                    flag = False
-                                    break
+                if (proc == 'HEPATECTOMY' or proc == 'HEPATIC' or proc == 'CHOLECYSTECTOMY'
+                        or proc == 'PANCREATECTOMY' or proc == 'PANCREATICODUODENECTOMY'):
+                    if 'COLECTOMY' not in procedure:
+                        continue_1 = True
+            if continue_1:
+                lines = str(data['PRE-INCISION ANTIBIOTICS'][x]).split("\n")
+                for a in range(len(lines)):
+                    pre_incision = lines[a].split()[0]
+                    hepatobiliary.append(pre_incision)
+                    print(pre_incision, '\n',
+                          data['PRIM PROCEDURE'][x], x, '\n')
+                    if pre_incision == "PIPERACILLIN-TAZOBACTAM" or pre_incision == "CIPROFLOXACIN" \
+                            or pre_incision == "METRONIDAZOLE":
+                        break
         except AttributeError:
             pass
     for medication in hepatobiliary:
