@@ -360,8 +360,8 @@ def pre_compliance():
     print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
           "TOTAL CASES", len(data), '\n')
 
-    """totals = []
-    cystectomy = []
+    totals = []
+    """cystectomy = []
     count, total = 0, 0
     medications = {}
 
@@ -642,8 +642,29 @@ def pre_compliance():
 def post_compliance():
     data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     data.dropna(subset=['SURGERY DATE'], inplace=True)
-    print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
-          "TOTAL CASES", len(data), '\n')
+
+    for x in range(len(data)):
+        medications_pre = {}
+        medications_post = {}
+        try:
+            pre_incision = data['PRE-INCISION ANTIBIOTICS'][x].split('\n')
+            for a in range(len(pre_incision)):
+                line = pre_incision[a].split(' ')
+                for y in range(len(line)):
+                    if line[y] == 'TAKEN:':
+                        medications_pre[line[0]] = pd.Timestamp(line[y+1])
+            post_incision = data['INCISION TO WHEELS OUT ANTIBIOTICS'][x].split('\n')
+            for a in range(len(post_incision)):
+                timings = []
+                line = post_incision[a].split(' ')
+                for y in range(len(line)):
+                    if line[y] == 'TAKEN:':
+                        timings.append(pd.Timestamp(line[y+1]))
+                    medications_post[line[0]] = timings
+            print(x, 'TIMINGS', medications_post)
+
+        except AttributeError:
+            pass
 
 
-pre_compliance()
+post_compliance()
