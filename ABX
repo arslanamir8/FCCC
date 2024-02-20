@@ -655,16 +655,24 @@ def post_compliance():
                         medications_pre[line[0]] = pd.Timestamp(line[y+1])
             post_incision = data['INCISION TO WHEELS OUT ANTIBIOTICS'][x].split('\n')
             for a in range(len(post_incision)):
-                timings = []
-                line = post_incision[a].split(' ')
+                line = post_incision[a].split()
+                medications_post[line[0]] = []
                 for y in range(len(line)):
                     if line[y] == 'TAKEN:':
-                        timings.append(pd.Timestamp(line[y+1]))
-                    medications_post[line[0]] = timings
-            print(x, 'TIMINGS', medications_post)
-
+                        medications_post[line[0]].append(pd.Timestamp(line[y+1]))
+            print(x, 'TIMINGS', medications_post, 'PRE', medications_pre)
         except AttributeError:
             pass
+
+        checker = {}
+        for k in medications_post.keys():
+            if k in medications_pre.keys():
+                for p in range(len(medications_post[k])):
+                    if len(medications_post[k]) > 1:
+                        pass
+                    else:
+                        checker[k] = medications_post[k][p] - medications_pre[k]
+        print('CHECKER', checker)
 
 
 post_compliance()
