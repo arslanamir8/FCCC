@@ -16,7 +16,7 @@ clean_closure_words = {'COLECTOMY', 'LOW ANTERIOR BOWEL RESECTION', 'COLON RESEC
                        }
 
 def pre_incision_abx_avg():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    data = pd.read_excel("OBFUSCATE", sheet_name=0)
 
     master = []
     by_service = {}
@@ -48,7 +48,7 @@ def pre_incision_abx_avg():
             df = pd.DataFrame(data=by_service)
             df = df.T
             print(df)
-            df.to_excel("/Users/arslanamir/Documents/Work/Quality/practice.xlsx")
+            df.to_excel("OBFUSCATE")
         except:
             pass
 
@@ -65,7 +65,7 @@ def pre_incision_abx_avg():
 
 
 def post_incision_abx_avg():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
+    data = pd.read_excel("OBFUSCATE", sheet_name=1)
     master = []
     by_service = {}
     for x in range(len(data)):
@@ -163,7 +163,7 @@ def post_incision_abx_avg():
 
 
 def pre_incision_printer():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
+    data = pd.read_excel("OBFUSCATE", sheet_name=1)
     medications = {}
 
     for x in range(len(data)):
@@ -176,11 +176,11 @@ def pre_incision_printer():
                     medications[lines[a].split()[0]].append(int(lines[a].split()[y + 1]))
 
     medications = pd.DataFrame.from_dict(data=medications, orient='index').T
-    medications.to_excel('/Users/arslanamir/Documents/Work/Quality/practice2.xlsx', index=False)
+    medications.to_excel('OBFUSCATE', index=False)
 
 
 def post_incision_printer():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
+    data = pd.read_excel("OBFUSCATE", sheet_name=1)
     medications = {}
 
     for x in range(len(data)):
@@ -243,11 +243,11 @@ def post_incision_printer():
                         medications[post_incision_str[a].split()[0]].append(difference)
 
     """medications = pd.DataFrame.from_dict(data=medications, orient='index').T
-    medications.to_excel('/Users/arslanamir/Documents/Work/Quality/practice1.xlsx', index=False)"""
+    medications.to_excel('OBFUSCATE', index=False)"""
 
 
 def wound_protector():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    data = pd.read_excel("OBFUSCATE", sheet_name=0)
     applicable = 0
     used = 0
 
@@ -291,7 +291,7 @@ def wound_protector():
 
 
 def clean_closure():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
+    data = pd.read_excel("OBFUSCATE", sheet_name=1)
     applicable = 0
     used = 0
 
@@ -339,7 +339,7 @@ def clean_closure():
 
 
 def homo():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    data = pd.read_excel("OBFUSCATE, sheet_name=0)
     sum = 0
     count = 0
 
@@ -355,7 +355,7 @@ def homo():
 
 
 def pre_compliance():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
+    data = pd.read_excel("OBFUSCATE", sheet_name=0)
     data.dropna(subset=['SURGERY DATE'], inplace=True)
     print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
           "TOTAL CASES", len(data), '\n')
@@ -640,7 +640,7 @@ def pre_compliance():
 
 
 def post_compliance():
-    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
+    data = pd.read_excel("OBFUSCATE", sheet_name=1)
     data.dropna(subset=['SURGERY DATE'], inplace=True)
 
     for x in range(len(data)):
