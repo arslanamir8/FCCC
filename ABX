@@ -1,30 +1,37 @@
 #!/bin/python3
 import pandas as pd
 
-wound_protector_cpt = {44320, 44204, 44207, 44208, 44205, 44206, 44207, 44208, 44210, 44211, 44212,
-                       44140, 44141, 44143, 44144, 44145, 44146, 44147, 44160, 45112, 45110, 45119, 45120,
+wound_protector_cpt = {44204, 44207, 44208, 44205, 44206, 44207, 44208, 44210, 44211, 44212,
+                       44140, 44141, 44143, 44144, 44145, 44147, 44160, 45112, 45110, 45119, 45120,
                        }
 wound_protector_words = {'COLECTOMY', 'COLON RESECTION', 'LOW ANTERIOR BOWEL RESECTION'}
 clean_closure_cpt = {44204, 44207, 44208, 44205, 44206, 44207, 44208, 44210, 44211, 44212,
-                     44140, 44141, 44143, 44144, 44145, 44146, 44147, 44160, 44320,
-                     45112, 45110, 45119, 45120, 47120, 47122, 47125, 47130, 48150,
+                     44140, 44141, 44143, 44144, 44145, 44147, 44160,
+                     45112, 45110, 45119, 45120, 48150,
                      48152, 48153, 48154, 50840, 50650, 50660, 51590, 51550, 51555, 51565, 51570, 51575, 51580, 51585,
                      51595, 51596, 53210, 53215, 50700, 52341, 52344, 44660, 44661,
                      }
 clean_closure_words = {'COLECTOMY', 'LOW ANTERIOR BOWEL RESECTION', 'COLON RESECTION',
-                       'NEPHROURETERECTOMY', 'BOWEL', 'CECOTOMY', 'COLOTOMY', 'ILEOSTOMY'
+                       'NEPHROURETERECTOMY', 'BOWEL', 'CECOTOMY', 'COLOTOMY', 'ILEOSTOMY', 'CYSTECTOMY'
                        }
 
+
 def pre_incision_abx_avg():
-    data = pd.read_excel("OBFUSCATE", sheet_name=0)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Arslan SSI Report All Locations April 2024.xlsx", sheet_name=0)
 
     master = []
     by_service = {}
+    overall = {}
     for x in range(len(data)):
         master.append([data['PRE-INCISION ANTIBIOTICS'][x], data['SERVICE'][x]])
     for service in data['SERVICE']:
         if service not in by_service.keys():
             by_service[service] = []
+    for z in range(len(master)):
+        words = str(master[z][0]).split("\n")
+        for a in range(len(words)):
+            if words[a].split()[0] not in overall.keys():
+                overall[words[a].split()[0]] = []
 
     for service in by_service.keys():
         averages = {}
@@ -39,18 +46,21 @@ def pre_incision_abx_avg():
                         if words[a].split()[y] == "INCISION:":
                             medications[words[a].split()[0]].append(words[a].split()[y+1])
         by_service[service] = medications
+
         try:
             del by_service[service]['nan']
         except KeyError:
             pass
-        print(by_service)
         try:
             df = pd.DataFrame(data=by_service)
             df = df.T
-            print(df)
-            df.to_excel("OBFUSCATE")
+            df.to_excel("/Users/arslanamir/Documents/Work/Quality/practice.xlsx")
         except:
             pass
+
+        for key, value in by_service[service].items():
+            for timing in value:
+                overall[key].append(timing)
 
         for key, value in by_service[service].items():
             test_list = list(map(int, by_service[service][key]))
@@ -61,11 +71,25 @@ def pre_incision_abx_avg():
                 count += 1
             averages[key] = [total/len(test_list), count]
         by_service[service] = averages
-    #print(by_service)
+
+    for key, value in overall.items():
+        test_list = list(map(int, overall[key]))
+        total = 0
+        count = 0
+        for x in test_list:
+            total += x
+            count += 1
+        try:
+            overall[key] = [total / len(test_list), count]
+        except ZeroDivisionError:
+            pass
+    print('Overall', overall)
+
+    print('BY service', by_service)
 
 
 def post_incision_abx_avg():
-    data = pd.read_excel("OBFUSCATE", sheet_name=1)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     master = []
     by_service = {}
     for x in range(len(data)):
@@ -163,7 +187,7 @@ def post_incision_abx_avg():
 
 
 def pre_incision_printer():
-    data = pd.read_excel("OBFUSCATE", sheet_name=1)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     medications = {}
 
     for x in range(len(data)):
@@ -176,11 +200,11 @@ def pre_incision_printer():
                     medications[lines[a].split()[0]].append(int(lines[a].split()[y + 1]))
 
     medications = pd.DataFrame.from_dict(data=medications, orient='index').T
-    medications.to_excel('OBFUSCATE', index=False)
+    medications.to_excel('/Users/arslanamir/Documents/Work/Quality/practice2.xlsx', index=False)
 
 
 def post_incision_printer():
-    data = pd.read_excel("OBFUSCATE", sheet_name=1)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     medications = {}
 
     for x in range(len(data)):
@@ -243,11 +267,11 @@ def post_incision_printer():
                         medications[post_incision_str[a].split()[0]].append(difference)
 
     """medications = pd.DataFrame.from_dict(data=medications, orient='index').T
-    medications.to_excel('OBFUSCATE', index=False)"""
+    medications.to_excel('/Users/arslanamir/Documents/Work/Quality/practice1.xlsx', index=False)"""
 
 
 def wound_protector():
-    data = pd.read_excel("OBFUSCATE", sheet_name=0)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Arslan SSI Report All Locations April 2024.xlsx", sheet_name=0)
     applicable = 0
     used = 0
 
@@ -291,7 +315,7 @@ def wound_protector():
 
 
 def clean_closure():
-    data = pd.read_excel("OBFUSCATE", sheet_name=1)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Arslan SSI Report All Locations April 2024.xlsx", sheet_name=0)
     applicable = 0
     used = 0
 
@@ -339,7 +363,7 @@ def clean_closure():
 
 
 def homo():
-    data = pd.read_excel("OBFUSCATE, sheet_name=0)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=0)
     sum = 0
     count = 0
 
@@ -355,7 +379,7 @@ def homo():
 
 
 def pre_compliance():
-    data = pd.read_excel("OBFUSCATE", sheet_name=0)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     data.dropna(subset=['SURGERY DATE'], inplace=True)
     print("NO PRE-INCISION LISTED", data['PRE-INCISION ANTIBIOTICS'].isna().sum(), '\n',
           "TOTAL CASES", len(data), '\n')
@@ -640,39 +664,113 @@ def pre_compliance():
 
 
 def post_compliance():
-    data = pd.read_excel("OBFUSCATE", sheet_name=1)
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Quality/SSI.xlsx", sheet_name=1)
     data.dropna(subset=['SURGERY DATE'], inplace=True)
 
     for x in range(len(data)):
-        medications_pre = {}
-        medications_post = {}
+        medications = {}
         try:
             pre_incision = data['PRE-INCISION ANTIBIOTICS'][x].split('\n')
             for a in range(len(pre_incision)):
                 line = pre_incision[a].split(' ')
+                medications[line[0]] = []
                 for y in range(len(line)):
                     if line[y] == 'TAKEN:':
-                        medications_pre[line[0]] = pd.Timestamp(line[y+1])
+                        medications[line[0]].append(pd.Timestamp(line[y+1]))
             post_incision = data['INCISION TO WHEELS OUT ANTIBIOTICS'][x].split('\n')
             for a in range(len(post_incision)):
                 line = post_incision[a].split()
-                medications_post[line[0]] = []
+                if line[0] not in medications.keys():
+                    medications[line[0]] = []
                 for y in range(len(line)):
                     if line[y] == 'TAKEN:':
-                        medications_post[line[0]].append(pd.Timestamp(line[y+1]))
-            print(x, 'TIMINGS', medications_post, 'PRE', medications_pre)
+                        medications[line[0]].append(pd.Timestamp(line[y+1]))
+            print(x, 'TIMINGS', medications)
         except AttributeError:
             pass
 
         checker = {}
-        for k in medications_post.keys():
-            if k in medications_pre.keys():
-                for p in range(len(medications_post[k])):
-                    if len(medications_post[k]) > 1:
+        for k in medications.keys():
+            for p in range(len(medications[k])):
+                if len(medications[k]) > 1:
+                    try:
+                        checker[k] = medications[k][p+1] - medications[k][p]
+                    except IndexError:
                         pass
-                    else:
-                        checker[k] = medications_post[k][p] - medications_pre[k]
-        print('CHECKER', checker)
+        print('MEDICATIONS', medications)
+        print('CHECKER', checker, '\n')
 
 
-post_compliance()
+#Really its clean closure
+def colorectal(data, x):
+    flag = True
+    lines = str(data['CPT CODES'][x]).split(" , ")
+    for line in lines:
+        for code in wound_protector_cpt:
+            try:
+                if int(code) == int(line) and flag:
+                    return True
+            except ValueError:
+                pass
+    try:
+        for procedure in wound_protector_words:
+            if len(procedure.split()) > 1:
+                words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+                if procedure.split()[0] in words and procedure.split()[1] in words and flag:
+                    return True
+            words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+            if procedure in words and flag:
+                return True
+    except AttributeError:
+        pass
+
+
+def clean_closure_colorectal():
+    data = pd.read_excel("/Users/arslanamir/Documents/Work/Arslan SSI Report All Locations April 2024.xlsx", sheet_name=0)
+    applicable = 0
+    used = 0
+
+    for x in range(len(data)):
+        if colorectal(data, x):
+            flag = True
+            lines = str(data['CPT CODES'][x]).split(" , ")
+            for line in lines:
+                for code in wound_protector_cpt:
+                    try:
+                        if int(code) == int(line) and flag:
+                            print(data['PRIM PROCEDURE'][x])
+                            print('code', code, 'line', line)
+                            applicable += 1
+                            flag = False
+                            if str(data['CLEAN CLOSURE PROC YN'][x]) == 'Yes':
+                                used += 1
+                    except ValueError:
+                        pass
+            try:
+                for procedure in wound_protector_words:
+                    if len(procedure.split()) > 1:
+                        words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+                        if procedure.split()[0] in words and procedure.split()[1] in words and flag:
+                            print(data['PRIM PROCEDURE'][x])
+                            print('CODE', procedure)
+                            applicable += 1
+                            flag = False
+                            if str(data['CLEAN CLOSURE PROC YN'][x]) == 'Yes':
+                                used += 1
+                    words = str((data['PRIM PROCEDURE'][x].upper().replace(',', '')).split())
+                    if procedure in words and flag:
+                        print(data['PRIM PROCEDURE'][x])
+                        print('CODE', procedure)
+                        applicable += 1
+                        flag = False
+                        if str(data['CLEAN CLOSURE PROC YN'][x]) == 'Yes':
+                            used += 1
+            except AttributeError:
+                pass
+            print("USED", used, 'applicable', applicable, '\n')
+
+    print('applicable', applicable, 'used', used,
+          '\n', 'rate', used / applicable)
+
+
+clean_closure_colorectal()
